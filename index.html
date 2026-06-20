@@ -80,6 +80,20 @@
   .flow-note b { color: var(--navy); }
 
   .footer-note { text-align:center; font-size: 11.5px; color: var(--text-soft); margin-top: 30px; }
+
+  .section-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 36px 0 16px;
+  }
+  .section-divider span {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-soft); white-space: nowrap;
+  }
+  .section-divider::before, .section-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .stripe-admin { background: var(--text-soft); }
+  .audience-admin { background: #ECECEC; color: var(--text-soft); }
 </style>
 </head>
 <body>
@@ -120,7 +134,7 @@
     <div class="link-stripe stripe-navy"></div>
     <div class="link-body">
       <div class="link-title">Manager Review <span class="link-audience audience-navy">Manager</span></div>
-      <p class="link-desc">Review each team member's self-appraisal side-by-side, add your own ratings, overall assessment, and development areas. Available once the employee has submitted.</p>
+      <p class="link-desc">Review each team member's self-appraisal side-by-side, add your own ratings, overall assessment, and development areas. Available once the employee has submitted. Now includes a read-only FY2025-26 snapshot (last year's CTC, KRA, and 360 scores) for context where available.</p>
     </div>
   </a>
 
@@ -137,6 +151,16 @@
     <div class="link-body">
       <div class="link-title">Rating Calibration <span class="link-audience audience-navy">HR / CEO</span></div>
       <p class="link-desc">Compare each manager's rating distribution against the org average for the quarter, flagging anyone noticeably more lenient or harsh before ratings are treated as final.</p>
+    </div>
+  </a>
+
+  <div class="section-divider"><span>Admin / One-Time Setup</span></div>
+
+  <a class="link-card" href="import-fy2526.html">
+    <div class="link-stripe stripe-admin"></div>
+    <div class="link-body">
+      <div class="link-title">Import FY2025-26 Records <span class="link-audience audience-admin">HR / Admin</span></div>
+      <p class="link-desc">One-time import of last year's annual appraisal data (164 employees from Master_PMS.xlsx) into the Roster and a new Prior_Annual_Review tab. Safe to re-run. Feeds the FY2025-26 snapshot shown on Manager Review.</p>
     </div>
   </a>
 
