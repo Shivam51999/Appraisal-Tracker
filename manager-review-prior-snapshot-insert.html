@@ -1,0 +1,69 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     INSERT — FY2025-26 Snapshot panel for manager-review.html
+     Drop the HTML block into the page where the employee's
+     self-appraisal is displayed (right before or after it).
+     Drop the JS function into the existing script section that already
+     calls getSelfAppraisalForReview, and call it at the same point.
+     Uses the same fetch/token/action pattern as the rest of this app.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- HTML: place this container wherever the snapshot should appear -->
+<div id="priorReviewPanel" style="display:none; margin: 16px 0; border: 1px solid #e0d3ad;
+     border-left: 4px solid #B8922A; border-radius: 6px; background: #FBF7EC; padding: 16px 18px;">
+  <div style="font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+       color:#8a6d1f; margin-bottom:10px;">
+    FY 2025-26 Annual Review — For Context Only
+  </div>
+  <div id="priorReviewBody" style="font-size:13px; color:#3a3a3a; line-height:1.7;"></div>
+  <div style="font-size:11px; color:#9a8350; margin-top:10px;">
+    This is last year's record, shown for context. It is read-only and is not part of this quarter's review.
+  </div>
+</div>
+
+<script>
+// ── Call this alongside (or right after) your existing
+//    getSelfAppraisalForReview() load, passing the same employeeId ──
+async function loadPriorAnnualReview(employeeId) {
+  const panel = document.getElementById('priorReviewPanel');
+  const body = document.getElementById('priorReviewBody');
+  try {
+    const url = WEB_APP_URL + '?action=priorAnnualReview'
+      + '&employeeId=' + encodeURIComponent(employeeId)
+      + '&token=' + encodeURIComponent(ACCESS_TOKEN);
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.found) {
+      panel.style.display = 'none';
+      return;
+    }
+
+    const r = data.review;
+    const fmtCTC = (v) => v ? '₹' + Number(v).toLocaleString('en-IN') : '—';
+    const fmtScore = (v) => (v === '' || v === null || v === undefined) ? '—' : v;
+
+    body.innerHTML = `
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:10px 18px; margin-bottom:10px;">
+        <div><b>Designation:</b> ${r.Designation_FY2526 || '—'}</div>
+        <div><b>Current CTC:</b> ${fmtCTC(r.Current_CTC_FY2526)}</div>
+        <div><b>KRA Professional:</b> ${fmtScore(r.KRA_Professional_Score)} / 50</div>
+        <div><b>360 Review:</b> ${fmtScore(r.Review_360_Score)} / 50</div>
+        <div><b>Total KRA:</b> ${fmtScore(r.Total_KRA_Score)} / 100</div>
+        <div><b>HOD Proposed CTC:</b> ${fmtCTC(r.HOD_Proposed_CTC)}</div>
+      </div>
+      ${r.Promotion_Suggested ? `<div style="margin-top:6px;"><b>Promotion noted last cycle:</b> ${r.Promotion_Suggested}</div>` : ''}
+      ${r.Achievements_Summary ? `<div style="margin-top:6px;"><b>FY25-26 achievements (HOD-recorded):</b> ${r.Achievements_Summary}</div>` : ''}
+      ${r.HOD_Remark ? `<div style="margin-top:6px;"><b>HOD remark:</b> ${r.HOD_Remark}</div>` : ''}
+    `;
+    panel.style.display = 'block';
+  } catch (e) {
+    // Fail silently — this panel is supplementary context, never blocking
+    panel.style.display = 'none';
+  }
+}
+
+// Example wiring, inside whatever function currently does:
+//   const reviewData = await getSelfAppraisalForReview(employeeId, quarter);
+// add immediately after it:
+//   loadPriorAnnualReview(employeeId);
+</script>
